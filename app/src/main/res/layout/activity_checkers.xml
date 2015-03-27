@@ -10,6 +10,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New Button"
-        android:id="@+id/button"
+        android:id="@+id/button_newGame"
         android:layout_gravity="center_horizontal"/>
 </LinearLayout>
