@@ -1,17 +1,34 @@
 package company.com.checkers;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 
 public class CheckersActivity extends ActionBarActivity {
+    Button buttonNewGame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkers);
+
+        buttonNewGame = (Button) findViewById(R.id.button_newGame);
+        buttonNewGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startNewGame();
+            }
+        });
+    }
+
+    private void startNewGame() {
+        Intent intent = new Intent(this, PlayingField.class);
+        startActivity(intent);
     }
 
 
