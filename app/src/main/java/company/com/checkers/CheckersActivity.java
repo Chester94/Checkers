@@ -27,7 +27,7 @@ public class CheckersActivity extends ActionBarActivity {
     }
 
     private void startNewGame() {
-        Intent intent = new Intent(this, PlayingField.class);
+        Intent intent = new Intent(this, PlayingFieldActivity.class);
         startActivity(intent);
     }
 

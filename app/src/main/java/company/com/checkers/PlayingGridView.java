@@ -7,15 +7,16 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class PlayingGrid extends View {
-    public PlayingGrid(Context context, AttributeSet attrs) {
+public class PlayingGridView extends View {
+    public PlayingGridView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
     @Override
-    public void onDraw(Canvas canvas) {
+    protected void onDraw(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.RED);
-        canvas.drawLine(10, 10, 100, 100,paint);
+
+        canvas.drawLine(10, 10, 200, 200, paint);
     }
 }

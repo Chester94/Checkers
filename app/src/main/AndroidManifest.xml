@@ -20,6 +20,10 @@
             android:name=".PlayingField"
             android:label="@string/app_name" >
         </activity>
+        <activity
+            android:name=".PlayingFieldActivity"
+            android:label="@string/title_activity_playing_field" >
+        </activity>
     </application>
 
 </manifest>
