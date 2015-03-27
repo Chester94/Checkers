@@ -24,6 +24,9 @@ public class PlayingGridView extends View implements View.OnTouchListener {
     protected void onDraw(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.RED);
+
+        drawGrid(canvas);
+
         canvas.drawCircle((float)x, (float)y, 40, paint);
     }
 
@@ -45,5 +48,25 @@ public class PlayingGridView extends View implements View.OnTouchListener {
         }
         invalidate();
         return true;
+    }
+
+    private void drawGrid(Canvas canvas) {
+        int size = Math.min(getHeight(), getWidth());
+        double cellHeight = (double)size / GameModel.GRID_HEIGHT;
+        double cellWidth = (double)size / GameModel.GRID_WIDTH;
+
+        Paint paint = new Paint();
+
+        for (int i = 0; i < GameModel.GRID_WIDTH; i++) {
+            for (int j = 0; j < GameModel.GRID_HEIGHT; j++) {
+                if( (i + j) % 2 == 0 )
+                    paint.setColor(Color.DKGRAY);
+                else
+                    paint.setColor(Color.WHITE);
+
+                canvas.drawRect((float)cellWidth * i, (float)cellHeight * j,
+                        (float)cellWidth * (i+1), (float)cellHeight * (j+1), paint);
+            }
+        }
     }
 }
