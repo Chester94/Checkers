@@ -12,6 +12,11 @@ public class PlayingGridView extends View implements View.OnTouchListener {
     private double x;
     private double y;
 
+    double cellHeight;
+    double cellWidth;
+
+    private GameModel model = new GameModel();
+
     public PlayingGridView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setOnTouchListener(this);
@@ -20,12 +25,21 @@ public class PlayingGridView extends View implements View.OnTouchListener {
         y = -100;
     }
 
+    private void calcCellSize() {
+        int size = Math.min(getHeight(), getWidth());
+        cellHeight = (double)size / GameModel.GRID_HEIGHT;
+        cellWidth = (double)size / GameModel.GRID_WIDTH;
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.RED);
 
+        calcCellSize();
+
         drawGrid(canvas);
+        drawCheckers(canvas);
 
         canvas.drawCircle((float)x, (float)y, 40, paint);
     }
@@ -51,10 +65,6 @@ public class PlayingGridView extends View implements View.OnTouchListener {
     }
 
     private void drawGrid(Canvas canvas) {
-        int size = Math.min(getHeight(), getWidth());
-        double cellHeight = (double)size / GameModel.GRID_HEIGHT;
-        double cellWidth = (double)size / GameModel.GRID_WIDTH;
-
         Paint paint = new Paint();
 
         for (int i = 0; i < GameModel.GRID_WIDTH; i++) {
@@ -66,6 +76,35 @@ public class PlayingGridView extends View implements View.OnTouchListener {
 
                 canvas.drawRect((float)cellWidth * i, (float)cellHeight * j,
                         (float)cellWidth * (i+1), (float)cellHeight * (j+1), paint);
+            }
+        }
+    }
+
+    private void drawCheckers(Canvas canvas) {
+        int [][] grid = model.getGrid();
+
+        Paint paint = new Paint();
+
+        for (int i = 0; i < GameModel.GRID_WIDTH; i++) {
+            for (int j = 0; j < GameModel.GRID_HEIGHT; j++) {
+                switch (grid[i][j]) {
+                    case GameModel.NOTHING :
+                        paint.setColor(Color.TRANSPARENT);
+                        break;
+                    case GameModel.WHITE_CHECKER :
+                        paint.setColor(Color.RED);
+                        break;
+                    case GameModel.BLACK_CHECKER :
+                        paint.setColor(Color.BLACK);
+                        break;
+                    default :
+                        paint.setColor(Color.TRANSPARENT);
+                        break;
+                }
+
+                canvas.drawCircle((float)(cellWidth * i + cellWidth / 2.),
+                        (float)(cellHeight * j + cellHeight / 2.),
+                        (float)(cellHeight / 3.), paint);
             }
         }
     }

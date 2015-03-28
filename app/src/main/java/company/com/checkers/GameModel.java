@@ -23,4 +23,8 @@ public class GameModel {
 
     public GameModel() {
     }
+
+    public int[][] getGrid() {
+        return grid;
+    }
 }
