@@ -60,9 +60,9 @@ public class PlayingGridView extends View implements View.OnTouchListener {
         for (int i = 0; i < GameModel.GRID_WIDTH; i++) {
             for (int j = 0; j < GameModel.GRID_HEIGHT; j++) {
                 if( (i + j) % 2 == 0 )
-                    paint.setColor(Color.DKGRAY);
-                else
                     paint.setColor(Color.WHITE);
+                else
+                    paint.setColor(Color.DKGRAY);
 
                 canvas.drawRect((float)cellWidth * i, (float)cellHeight * j,
                         (float)cellWidth * (i+1), (float)cellHeight * (j+1), paint);
