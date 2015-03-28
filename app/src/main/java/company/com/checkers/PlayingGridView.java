@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -60,6 +61,10 @@ public class PlayingGridView extends View implements View.OnTouchListener {
                 y = -100;
                 break;
         }
+        /*Log.d("----", "Heigth " + getHeight());
+        Log.d("----", "Width " + getWidth());
+        Log.d("----", "x " + x);
+        Log.d("----", "y " + y);*/
         invalidate();
         return true;
     }
@@ -102,9 +107,9 @@ public class PlayingGridView extends View implements View.OnTouchListener {
                         break;
                 }
 
-                canvas.drawCircle((float)(cellWidth * i + cellWidth / 2.),
-                        (float)(cellHeight * j + cellHeight / 2.),
-                        (float)(cellHeight / 3.), paint);
+                canvas.drawCircle((float)(cellHeight * j + cellHeight / 2.),
+                        (float)(cellWidth * i + cellWidth / 2.),
+                        (float)(cellHeight / 2.5), paint);
             }
         }
     }
