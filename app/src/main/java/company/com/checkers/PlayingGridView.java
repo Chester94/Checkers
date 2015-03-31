@@ -13,10 +13,13 @@ public class PlayingGridView extends View implements View.OnTouchListener {
     private double x;
     private double y;
 
-    double cellHeight;
-    double cellWidth;
+    double cellSize;
 
-    private GameModel model = new GameModel();
+    private GameModel model;
+
+    public void setModel(GameModel model) {
+        this.model = model;
+    }
 
     public PlayingGridView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -28,8 +31,7 @@ public class PlayingGridView extends View implements View.OnTouchListener {
 
     private void calcCellSize() {
         int size = Math.min(getHeight(), getWidth());
-        cellHeight = (double)size / GameModel.GRID_HEIGHT;
-        cellWidth = (double)size / GameModel.GRID_WIDTH;
+        cellSize = (double)size / GameModel.GRID_DIMENSION;
     }
 
     @Override
@@ -72,15 +74,15 @@ public class PlayingGridView extends View implements View.OnTouchListener {
     private void drawGrid(Canvas canvas) {
         Paint paint = new Paint();
 
-        for (int i = 0; i < GameModel.GRID_WIDTH; i++) {
-            for (int j = 0; j < GameModel.GRID_HEIGHT; j++) {
+        for (int i = 0; i < GameModel.GRID_DIMENSION; i++) {
+            for (int j = 0; j < GameModel.GRID_DIMENSION; j++) {
                 if( (i + j) % 2 == 0 )
                     paint.setColor(Color.WHITE);
                 else
-                    paint.setColor(Color.LTGRAY);
+                    paint.setColor(Color.DKGRAY);
 
-                canvas.drawRect((float)cellWidth * i, (float)cellHeight * j,
-                        (float)cellWidth * (i+1), (float)cellHeight * (j+1), paint);
+                canvas.drawRect((float)cellSize * i, (float)cellSize * j,
+                        (float)cellSize * (i+1), (float)cellSize * (j+1), paint);
             }
         }
     }
@@ -88,29 +90,51 @@ public class PlayingGridView extends View implements View.OnTouchListener {
     private void drawCheckers(Canvas canvas) {
         int [][] grid = model.getGrid();
 
-        Paint paint = new Paint();
-
-        for (int i = 0; i < GameModel.GRID_WIDTH; i++) {
-            for (int j = 0; j < GameModel.GRID_HEIGHT; j++) {
-                switch (grid[i][j]) {
-                    case GameModel.NOTHING :
-                        paint.setColor(Color.TRANSPARENT);
-                        break;
-                    case GameModel.WHITE_CHECKER :
-                        paint.setColor(Color.RED);
-                        break;
-                    case GameModel.BLACK_CHECKER :
-                        paint.setColor(Color.BLACK);
-                        break;
-                    default :
-                        paint.setColor(Color.TRANSPARENT);
-                        break;
-                }
-
-                canvas.drawCircle((float)(cellHeight * j + cellHeight / 2.),
-                        (float)(cellWidth * i + cellWidth / 2.),
-                        (float)(cellHeight / 2.5), paint);
+        for (int i = 0; i < GameModel.GRID_DIMENSION; i++) {
+            for (int j = 0; j < GameModel.GRID_DIMENSION; j++) {
+                float x = (float)(cellSize * j + cellSize / 2.);
+                float y = (float)(cellSize * i + cellSize / 2.);
+                drawChecker(canvas, x, y, grid[i][j]);
             }
         }
+    }
+
+    private void drawChecker(Canvas canvas, float x, float y, int type) {
+        Paint mainPaint = new Paint();
+        Paint strokePaint = new Paint();
+        Paint queenPaint = new Paint();
+
+        switch (type) {
+            case GameModel.NOTHING : default :
+                return;
+
+            case GameModel.WHITE_CHECKER :
+                mainPaint.setColor(Color.WHITE);
+                strokePaint.setColor(Color.BLACK);
+                queenPaint.setColor(Color.TRANSPARENT);
+                break;
+
+            case GameModel.BLACK_CHECKER :
+                mainPaint.setColor(Color.BLACK);
+                strokePaint.setColor(Color.WHITE);
+                queenPaint.setColor(Color.TRANSPARENT);
+                break;
+
+            case GameModel.WHITE_CHECKER_QUEEN :
+                mainPaint.setColor(Color.WHITE);
+                strokePaint.setColor(Color.BLACK);
+                queenPaint.setColor(Color.RED);
+                break;
+
+            case GameModel.BLACK_CHECKER_QUEEN :
+                mainPaint.setColor(Color.BLACK);
+                strokePaint.setColor(Color.WHITE);
+                queenPaint.setColor(Color.RED);
+                break;
+        }
+
+        canvas.drawCircle(x, y, (float)(cellSize / 2.5 + 2), strokePaint);
+        canvas.drawCircle(x, y, (float)(cellSize / 2.5), mainPaint);
+        canvas.drawCircle(x, y, (float)(cellSize / 4.5), queenPaint);
     }
 }
