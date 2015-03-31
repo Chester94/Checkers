@@ -77,7 +77,7 @@ public class PlayingGridView extends View implements View.OnTouchListener {
                 if( (i + j) % 2 == 0 )
                     paint.setColor(Color.WHITE);
                 else
-                    paint.setColor(Color.DKGRAY);
+                    paint.setColor(Color.LTGRAY);
 
                 canvas.drawRect((float)cellWidth * i, (float)cellHeight * j,
                         (float)cellWidth * (i+1), (float)cellHeight * (j+1), paint);

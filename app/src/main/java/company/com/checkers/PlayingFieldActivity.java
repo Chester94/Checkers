@@ -1,12 +1,13 @@
 package company.com.checkers;
 
+import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class PlayingFieldActivity extends ActionBarActivity {
+public class PlayingFieldActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
