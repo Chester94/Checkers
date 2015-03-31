@@ -9,9 +9,11 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.ArrayList;
+
 public class PlayingGridView extends View implements View.OnTouchListener {
-    private double x;
-    private double y;
+    private float x;
+    private float y;
 
     double cellSize;
 
@@ -24,12 +26,9 @@ public class PlayingGridView extends View implements View.OnTouchListener {
     public PlayingGridView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setOnTouchListener(this);
-
-        x = -100;
-        y = -100;
     }
 
-    private void calcCellSize() {
+    public void calcCellSize() {
         int size = Math.min(getHeight(), getWidth());
         cellSize = (double)size / GameModel.GRID_DIMENSION;
     }
@@ -44,23 +43,24 @@ public class PlayingGridView extends View implements View.OnTouchListener {
         drawGrid(canvas);
         drawCheckers(canvas);
 
-        canvas.drawCircle((float)x, (float)y, 40, paint);
+        drawChecker(canvas, x, y, model.getActiveCheckerType());
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+        x = event.getX();
+        y = event.getY();
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                x = event.getX();
-                y = event.getY();
+                model.activateChecker( (int)Math.round( y / cellSize),
+                        (int)Math.round( x / cellSize) );
                 break;
             case MotionEvent.ACTION_MOVE:
-                x = event.getX();
-                y = event.getY();
                 break;
             case MotionEvent.ACTION_UP:
-                x = -100;
-                y = -100;
+                model.deactivateChecker( (int)Math.round( y / cellSize),
+                        (int)Math.round( x / cellSize) );
                 break;
         }
         /*Log.d("----", "Heigth " + getHeight());
@@ -73,6 +73,7 @@ public class PlayingGridView extends View implements View.OnTouchListener {
 
     private void drawGrid(Canvas canvas) {
         Paint paint = new Paint();
+        float x1, x2, y1, y2;
 
         for (int i = 0; i < GameModel.GRID_DIMENSION; i++) {
             for (int j = 0; j < GameModel.GRID_DIMENSION; j++) {
@@ -81,8 +82,12 @@ public class PlayingGridView extends View implements View.OnTouchListener {
                 else
                     paint.setColor(Color.DKGRAY);
 
-                canvas.drawRect((float)cellSize * i, (float)cellSize * j,
-                        (float)cellSize * (i+1), (float)cellSize * (j+1), paint);
+                x1 = (float)cellSize * i;
+                y1 = (float)cellSize * j;
+                x2 = (float)cellSize * (i+1);
+                y2 = (float)cellSize * (j+1);
+
+                canvas.drawRect(x1, y1, x2, y2, paint);
             }
         }
     }
