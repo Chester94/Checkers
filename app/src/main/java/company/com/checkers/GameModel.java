@@ -1,109 +1,316 @@
 package company.com.checkers;
 
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 public class GameModel {
     public static final int GRID_DIMENSION = 8;
 
-    public static final int NOTHING = 0;
-    public static final int WHITE_CHECKER = 1;
-    public static final int BLACK_CHECKER = 2;
-    public static final int WHITE_CHECKER_QUEEN = 3;
-    public static final int BLACK_CHECKER_QUEEN = 4;
+    public static final int NONE = 0;
+    public static final int WHITE = 1;
+    public static final int BLACK = 2;
+    public static final int WHITE_QUEEN = 3;
+    public static final int BLACK_QUEEN = 4;
 
-    private final int WHITE_GO = 0;
-    private final int WHITE_GO_CHECKER = 1;
-    private final int BLACK_GO = 2;
-    private final int BLACK_GO_CHECKER = 3;
+    private int turn = WHITE;
+    private int playerColor = WHITE;
 
-    private final int[] GAME_STATE = {WHITE_GO, WHITE_GO_CHECKER, BLACK_GO, BLACK_GO_CHECKER};
-    private int state = 0;
-    private boolean activeFlag = false;
+    private int[][] grid;
 
-    private int activeCheckerType = NOTHING;
-    private int activeCheckerRow;
-    private int activeCheckerColumn;
+    private int activeCheckerRow = -1;
+    private int activeCheckerColumn = -1;
+    private boolean active = false;
 
-    private int [][] grid  = {
-            {NOTHING, BLACK_CHECKER, NOTHING, BLACK_CHECKER, NOTHING, BLACK_CHECKER, NOTHING, BLACK_CHECKER},
-            {BLACK_CHECKER, NOTHING, BLACK_CHECKER, NOTHING, BLACK_CHECKER, NOTHING, BLACK_CHECKER, NOTHING},
-            {NOTHING, BLACK_CHECKER, NOTHING, BLACK_CHECKER, NOTHING, BLACK_CHECKER, NOTHING, BLACK_CHECKER},
-            {NOTHING, NOTHING, NOTHING, NOTHING, NOTHING, NOTHING, NOTHING, NOTHING},
-            {NOTHING, NOTHING, NOTHING, NOTHING, NOTHING, NOTHING, NOTHING, NOTHING},
-            {WHITE_CHECKER, NOTHING, WHITE_CHECKER, NOTHING, WHITE_CHECKER, NOTHING, WHITE_CHECKER, NOTHING},
-            {NOTHING, WHITE_CHECKER, NOTHING, WHITE_CHECKER, NOTHING, WHITE_CHECKER, NOTHING, WHITE_CHECKER},
-            {WHITE_CHECKER, NOTHING, WHITE_CHECKER, NOTHING, WHITE_CHECKER, NOTHING, WHITE_CHECKER, NOTHING}
-    };
-
-    private ArrayList<Integer> availableCells = new ArrayList<>();
+    private int comboAttackerRow = -1;
+    private int comboAttackerColumn = -1;
+    private boolean attackStreak = false;
 
     public GameModel() {
+        grid = new int [GRID_DIMENSION][GRID_DIMENSION];
+        initGame();
+    }
+
+    public int getActiveCheckerRow() {
+        return activeCheckerRow;
+    }
+
+    public int getActiveCheckerColumn() {
+        return activeCheckerColumn;
+    }
+
+    private void initGame() {
+        for (int i = 0; i < GRID_DIMENSION; i++) {
+            for (int j = 0; j < GRID_DIMENSION; j++) {
+                if ( ( i + j ) % 2 != 0 ) {
+                    if ( i < 3 ) {
+                        grid[i][j] = BLACK;
+                        continue;
+                    }
+
+                    if ( i > 4 ) {
+                        grid[i][j] = WHITE;
+                        continue;
+                    }
+
+                    grid[i][j] = NONE;
+                }
+
+                /*if ( i < 3 && ( i + j ) % 2 == 0 ) {
+                    grid[i][j] = BLACK;
+                    continue;
+                }
+
+                if ( i > 4 && ( i + j ) % 2 == 0 ) {
+                    grid[i][j] = WHITE;
+                    continue;
+                }
+
+                grid[i][j] = NONE;*/
+            }
+        }
     }
 
     public int[][] getGrid() {
         return grid;
     }
 
-    public void activateChecker(int row, int column) {
-        if( row < 0 || row > 7 || column < 0 || column > 7 )
-            return;
-
-        if( ! checkCheckerAndState(row, column))
-            return;
-
-        activeFlag = true;
-
+    public void activateDragging(int row, int column) {
         activeCheckerRow = row;
         activeCheckerColumn = column;
-        activeCheckerType = grid[row][column];
-
-        grid[row][column] = NOTHING;
+        active = true;
     }
 
-    public void deactivateChecker(int row, int column) {
-        if( ! activeFlag )
-            return;
+    public void deactivateDragging() {
+        activeCheckerRow = -1;
+        activeCheckerColumn = -1;
+        active = false;
+    }
 
-        if( row < 0 || row > 7 || column < 0 || column > 7 ) {
-            resetActiveChecker();
-            return;
+    public boolean isActiveDragging() {
+        return active;
+    }
+
+    public boolean isActiveDragging(int row, int column) {
+        return activeCheckerRow == row && activeCheckerColumn == column;
+    }
+
+    public int getTurn() {
+        return turn;
+    }
+
+    public int getPlayerColor() {
+        return playerColor;
+    }
+
+    public boolean areMovesAvailableForPlayer() {
+        for (int i = 0; i < GRID_DIMENSION; i++) {
+            for (int j = 0; j < GRID_DIMENSION; j++) {
+                if ( areMovesAvailable(i, j) )
+                    return true;
+            }
         }
-
-        activeFlag = false;
-
-        activeCheckerRow = row;
-        activeCheckerColumn = column;
-
-        grid[row][column] = activeCheckerType;
-        activeCheckerType = NOTHING;
+        return false;
     }
 
-    public int getActiveCheckerType() {
-        return activeCheckerType;
+    public boolean areMovesAvailable(int row, int column) {
+        boolean movesAvailable = false;
+
+        if ( grid[row][column] == NONE )
+            return false;
+
+        if ( grid[row][column] != BLACK )
+            movesAvailable = movesAvailable || areMovesAvailableAbove(row, column);
+
+        if ( grid[row][column] != WHITE )
+            movesAvailable = movesAvailable || areMovesAvailableBelow(row, column);
+
+        return movesAvailable;
     }
 
-    private boolean checkCheckerAndState(int row, int column) {
-        if( GAME_STATE[state] == WHITE_GO || GAME_STATE[state] == WHITE_GO_CHECKER )
-            if( grid[row][column] == WHITE_CHECKER ||
-                    grid[row][column] == WHITE_CHECKER_QUEEN )
-                return true;
-            else
-                return false;
+    private boolean areMovesAvailableAbove(int row, int column) {
+        if (row == 0)
+            return false;
 
-        if( GAME_STATE[state] == BLACK_GO || GAME_STATE[state] == BLACK_GO_CHECKER )
-            if( grid[row][column] == BLACK_CHECKER ||
-                    grid[row][column] == BLACK_CHECKER_QUEEN )
-                return true;
-            else
-                return false;
+        if( column > 0 && grid[row - 1][column - 1] == NONE )
+            return true;
+
+        if ( column < (GRID_DIMENSION - 1) && grid[row - 1][column + 1] == NONE )
+            return true;
 
         return false;
     }
 
-    private void resetActiveChecker() {
-        grid[activeCheckerRow][activeCheckerColumn] = activeCheckerType;
-        activeCheckerType = NOTHING;
-        activeFlag = false;
+    private boolean areMovesAvailableBelow(int row, int column) {
+        if (row == (GRID_DIMENSION - 1))
+            return false;
+
+        if( column > 0 && grid[row + 1][column - 1] == NONE )
+            return true;
+
+        if ( column < (GRID_DIMENSION - 1) && grid[row + 1][column + 1] == NONE )
+            return true;
+
+        return false;
+    }
+
+    public boolean areAttackAvailableForPlayer() {
+        for (int i = 0; i < GRID_DIMENSION; i++) {
+            for (int j = 0; j < GRID_DIMENSION; j++) {
+                if (areAttackAvailable(i, j) == true)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean areAttackAvailable(int row, int column) {
+        if (checkerOwner(row, column) != turn)
+            return false;
+
+        if (isAttackValid(row, column, row - 2, column - 2))
+            return true;
+
+        if (isAttackValid(row, column, row - 2, column + 2))
+            return true;
+
+        if (isAttackValid(row, column, row + 2, column - 2))
+            return true;
+
+        if (isAttackValid(row, column, row + 2, column + 2))
+            return true;
+
+        return false;
+    }
+
+    public boolean isMoveValid(int toRow, int toColumn) {
+        if (isOutOfField(toRow, toColumn))
+            return false;
+
+        if (grid[toRow][toColumn] != NONE)
+            return false;
+
+        if (Math.abs(toRow - activeCheckerRow) != 1)
+            return false;
+
+        if (grid[activeCheckerRow][activeCheckerColumn] != BLACK)
+            if (activeCheckerColumn - toColumn == 1)
+                return true;
+
+        if (grid[activeCheckerRow][activeCheckerColumn] != WHITE)
+            if (activeCheckerColumn - toColumn == -1)
+                return true;
+
+        return false;
+    }
+
+    public boolean isAttackValid(int fromRow, int fromColumn, int toRow, int toColumn) {
+        if (isOutOfField(toRow, toColumn))
+            return false;
+
+        if (attackStreak && ! ( fromRow == comboAttackerRow && fromColumn == comboAttackerColumn ))
+            return false;
+
+        if (Math.abs( fromRow - toRow ) != 2 || Math.abs( fromColumn = toColumn ) != 2 )
+            return false;
+
+        if (checkerOwner(fromRow, fromColumn) !=
+                checkerOwner((fromRow + toRow) / 2, (fromColumn + toColumn) / 2) &&
+                checkerOwner((fromRow + toRow) / 2, (fromColumn + toColumn) / 2) != NONE &&
+                checkerOwner( toRow, toColumn ) == NONE )
+            return true;
+
+        return false;
+    }
+
+    public boolean isOutOfField(int row, int column) {
+        if( row < 0 || row > (GRID_DIMENSION - 1) ||
+                column < 0 || column > (GRID_DIMENSION - 1))
+            return true;
+
+        return false;
+    }
+
+    private int checkerOwner(int row, int column) {
+        if (grid[row][column] == WHITE || grid[row][column] == WHITE_QUEEN)
+            return WHITE;
+
+        if (grid[row][column] == BLACK || grid[row][column] == BLACK_QUEEN)
+            return BLACK;
+
+        return NONE;
+    }
+
+    private void promoteToQueen(int row, int column) {
+        if (turn == WHITE && row == 0)
+            grid[row][column] = WHITE_QUEEN;
+
+        if (turn == BLACK && row == (GRID_DIMENSION - 1))
+            grid[row][column] = BLACK_QUEEN;
+    }
+
+    private void changeTurn() {
+        if (turn == WHITE) {
+            turn = BLACK;
+            playerColor = BLACK;
+        }
+        else {
+            turn = WHITE;
+            playerColor = WHITE;
+        }
+
+        comboAttackerRow = -1;
+        comboAttackerColumn = -1;
+        attackStreak = false;
+    }
+
+    public void attack(int toRow, int toColumn) {
+        grid[toRow][toColumn] = grid[activeCheckerRow][activeCheckerColumn];
+        grid[(toRow + activeCheckerRow) / 2][(toColumn + activeCheckerColumn) / 2] = NONE;
+        grid[activeCheckerRow][activeCheckerColumn] = NONE;
+
+        promoteToQueen(toRow, toColumn);
+
+        comboAttackerRow = toRow;
+        comboAttackerColumn = toColumn;
+
+        if (areAttackAvailable(toRow, toColumn)) {
+            attackStreak = true;
+        }
+        else {
+            attackStreak = false;
+            changeTurn();
+            if (! areMovesAvailableForPlayer() && ! areAttackAvailableForPlayer() )
+                throwLose();
+        }
+    }
+
+    public void move(int toRow, int toColumn) {
+        grid[toRow][toColumn] = grid[activeCheckerRow][activeCheckerColumn];
+        grid[activeCheckerRow][activeCheckerColumn] = NONE;
+
+        promoteToQueen(toRow, toColumn);
+
+        changeTurn();
+
+        if (! areMovesAvailableForPlayer() && ! areAttackAvailableForPlayer() )
+            throwLose();
+    }
+
+    private void throwLose() {
+        Log.d("1111", "END GAME");
+        Log.d("1111", "SOME PROBLEM");
+    }
+
+    public boolean isCheckerBelongsToPlayer(int row, int column) {
+        if (playerColor == WHITE)
+            return grid[row][column] == WHITE || grid[row][column] == WHITE_QUEEN;
+
+        if (playerColor == BLACK)
+            return grid[row][column] == BLACK || grid[row][column] == BLACK_QUEEN;
+
+        return false;
     }
 }

@@ -42,25 +42,39 @@ public class PlayingGridView extends View implements View.OnTouchListener {
 
         drawGrid(canvas);
         drawCheckers(canvas);
-
-        drawChecker(canvas, x, y, model.getActiveCheckerType());
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        x = event.getX();
-        y = event.getY();
+        int row = (int)Math.round(event.getY() / cellSize);
+        int column = (int)Math.round(event.getX() / cellSize);
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                model.activateChecker( (int)Math.round( y / cellSize),
-                        (int)Math.round( x / cellSize) );
+                if (model.isOutOfField(row, column))
+                    return true;
+
+                if (model.getTurn() == model.getPlayerColor() &&
+                        model.isCheckerBelongsToPlayer(row, column) &&
+                        ( model.areAttackAvailable(row, column) || model.areMovesAvailable(row, column) ))
+                    model.activateDragging(row, column);
                 break;
             case MotionEvent.ACTION_MOVE:
                 break;
             case MotionEvent.ACTION_UP:
-                model.deactivateChecker( (int)Math.round( y / cellSize),
-                        (int)Math.round( x / cellSize) );
+                if (!model.isActiveDragging())
+                    return true;
+
+                if (model.areAttackAvailableForPlayer()) {
+                    if (model.isAttackValid(model.getActiveCheckerRow(), model.getActiveCheckerColumn(), row, column))
+                        model.attack(row, column);
+                }
+                else {
+                    if (model.isMoveValid(row, column))
+                        model.move(row, column);
+                }
+
+                model.deactivateDragging();
                 break;
         }
         /*Log.d("----", "Heigth " + getHeight());
@@ -97,6 +111,9 @@ public class PlayingGridView extends View implements View.OnTouchListener {
 
         for (int i = 0; i < GameModel.GRID_DIMENSION; i++) {
             for (int j = 0; j < GameModel.GRID_DIMENSION; j++) {
+                if (model.isActiveDragging(i, j))
+                    continue;
+
                 float x = (float)(cellSize * j + cellSize / 2.);
                 float y = (float)(cellSize * i + cellSize / 2.);
                 drawChecker(canvas, x, y, grid[i][j]);
@@ -110,28 +127,28 @@ public class PlayingGridView extends View implements View.OnTouchListener {
         Paint queenPaint = new Paint();
 
         switch (type) {
-            case GameModel.NOTHING : default :
+            case GameModel.NONE : default :
                 return;
 
-            case GameModel.WHITE_CHECKER :
+            case GameModel.WHITE :
                 mainPaint.setColor(Color.WHITE);
                 strokePaint.setColor(Color.BLACK);
                 queenPaint.setColor(Color.TRANSPARENT);
                 break;
 
-            case GameModel.BLACK_CHECKER :
+            case GameModel.BLACK :
                 mainPaint.setColor(Color.BLACK);
                 strokePaint.setColor(Color.WHITE);
                 queenPaint.setColor(Color.TRANSPARENT);
                 break;
 
-            case GameModel.WHITE_CHECKER_QUEEN :
+            case GameModel.WHITE_QUEEN :
                 mainPaint.setColor(Color.WHITE);
                 strokePaint.setColor(Color.BLACK);
                 queenPaint.setColor(Color.RED);
                 break;
 
-            case GameModel.BLACK_CHECKER_QUEEN :
+            case GameModel.BLACK_QUEEN :
                 mainPaint.setColor(Color.BLACK);
                 strokePaint.setColor(Color.WHITE);
                 queenPaint.setColor(Color.RED);
