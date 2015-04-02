@@ -55,9 +55,21 @@ public class PlayingGridView extends View implements View.OnTouchListener {
                     return true;
 
                 if (model.getTurn() == model.getPlayerColor() &&
-                        model.isCheckerBelongsToPlayer(row, column) &&
-                        ( model.areAttackAvailable(row, column) || model.areMovesAvailable(row, column) ))
-                    model.activateDragging(row, column);
+                        model.isCheckerBelongsToPlayer(row, column)) {
+                    if (model.areAttackAvailableForPlayer()) {
+                        if (model.areAttackAvailable(row, column))
+                            model.activateDragging(row, column);
+
+                        return true;
+                    }
+
+                    if (model.areMovesAvailableForPlayer()) {
+                        if (model.areMovesAvailable(row, column))
+                            model.activateDragging(row, column);
+
+                        return true;
+                    }
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 break;
@@ -66,12 +78,15 @@ public class PlayingGridView extends View implements View.OnTouchListener {
                     return true;
 
                 if (model.areAttackAvailableForPlayer()) {
+                    Log.d("1111", "yes");
                     if (model.isAttackValid(model.getActiveCheckerRow(), model.getActiveCheckerColumn(), row, column))
                         model.attack(row, column);
                 }
                 else {
-                    if (model.isMoveValid(row, column))
+                    if (model.isMoveValid(row, column)) {
+                        Log.d("1111", "yes1");
                         model.move(row, column);
+                    }
                 }
 
                 model.deactivateDragging();

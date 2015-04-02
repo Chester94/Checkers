@@ -56,18 +56,6 @@ public class GameModel {
 
                     grid[i][j] = NONE;
                 }
-
-                /*if ( i < 3 && ( i + j ) % 2 == 0 ) {
-                    grid[i][j] = BLACK;
-                    continue;
-                }
-
-                if ( i > 4 && ( i + j ) % 2 == 0 ) {
-                    grid[i][j] = WHITE;
-                    continue;
-                }
-
-                grid[i][j] = NONE;*/
             }
         }
     }
@@ -189,18 +177,20 @@ public class GameModel {
         if (isOutOfField(toRow, toColumn))
             return false;
 
+        Log.d("1111", "" + activeCheckerRow + " " + activeCheckerColumn + " " + toRow + " " + toColumn);
+
         if (grid[toRow][toColumn] != NONE)
             return false;
 
-        if (Math.abs(toRow - activeCheckerRow) != 1)
+        if (Math.abs(toColumn - activeCheckerColumn) != 1)
             return false;
 
         if (grid[activeCheckerRow][activeCheckerColumn] != BLACK)
-            if (activeCheckerColumn - toColumn == 1)
+            if (activeCheckerRow - toRow == 1)
                 return true;
 
         if (grid[activeCheckerRow][activeCheckerColumn] != WHITE)
-            if (activeCheckerColumn - toColumn == -1)
+            if (activeCheckerRow - toRow == -1)
                 return true;
 
         return false;
@@ -213,7 +203,7 @@ public class GameModel {
         if (attackStreak && ! ( fromRow == comboAttackerRow && fromColumn == comboAttackerColumn ))
             return false;
 
-        if (Math.abs( fromRow - toRow ) != 2 || Math.abs( fromColumn = toColumn ) != 2 )
+        if (Math.abs( fromRow - toRow ) != 2 || Math.abs( fromColumn - toColumn ) != 2 )
             return false;
 
         if (checkerOwner(fromRow, fromColumn) !=
