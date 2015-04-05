@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">Шашки</string>
 
-    <string name="action_settings">Настройки</string>
-    <string name="button_newGame_text">Новая игра</string>
-    <string name="button_exit_text">Выход</string>
+    <string name="action_new_game">Новая игра</string>
 </resources>

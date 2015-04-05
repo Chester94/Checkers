@@ -1,36 +1,34 @@
 package company.com.checkers;
 
-import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
+import android.view.Window;
+import android.view.WindowManager;
 
-
-public class CheckersActivity extends ActionBarActivity {
-    Button buttonNewGame;
+public class CheckersActivity extends Activity {
+    GameModel model = new GameModel();
+    PlayingGridView view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_checkers);
 
-        buttonNewGame = (Button) findViewById(R.id.button_newGame);
-        buttonNewGame.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startNewGame();
-            }
-        });
+        view = (PlayingGridView) findViewById(R.id.view_playingField);
+        view.setModel(model);
     }
 
-    private void startNewGame() {
-        Intent intent = new Intent(this, PlayingFieldActivity.class);
-        startActivity(intent);
+    public void startGame() {
+        model.initGame();
+        view.invalidate();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -47,7 +45,8 @@ public class CheckersActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_new_game) {
+            startGame();
             return true;
         }
 

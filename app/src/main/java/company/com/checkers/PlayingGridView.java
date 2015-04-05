@@ -5,11 +5,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-
-import java.util.ArrayList;
 
 public class PlayingGridView extends View implements View.OnTouchListener {
     private float x;
@@ -51,51 +48,14 @@ public class PlayingGridView extends View implements View.OnTouchListener {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (model.isOutOfField(row, column))
-                    return true;
-
-                if (model.getTurn() == model.getPlayerColor() &&
-                        model.isCheckerBelongsToPlayer(row, column)) {
-                    if (model.areAttackAvailableForPlayer()) {
-                        if (model.areAttackAvailable(row, column))
-                            model.activateDragging(row, column);
-
-                        return true;
-                    }
-
-                    if (model.areMovesAvailableForPlayer()) {
-                        if (model.areMovesAvailable(row, column))
-                            model.activateDragging(row, column);
-
-                        return true;
-                    }
-                }
+                model.startStep(row, column);
                 break;
             case MotionEvent.ACTION_MOVE:
                 break;
             case MotionEvent.ACTION_UP:
-                if (!model.isActiveDragging())
-                    return true;
-
-                if (model.areAttackAvailableForPlayer()) {
-                    Log.d("1111", "yes");
-                    if (model.isAttackValid(model.getActiveCheckerRow(), model.getActiveCheckerColumn(), row, column))
-                        model.attack(row, column);
-                }
-                else {
-                    if (model.isMoveValid(row, column)) {
-                        Log.d("1111", "yes1");
-                        model.move(row, column);
-                    }
-                }
-
-                model.deactivateDragging();
+                model.stopStep(row, column);
                 break;
         }
-        /*Log.d("----", "Heigth " + getHeight());
-        Log.d("----", "Width " + getWidth());
-        Log.d("----", "x " + x);
-        Log.d("----", "y " + y);*/
         invalidate();
         return true;
     }

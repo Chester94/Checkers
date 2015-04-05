@@ -3,8 +3,6 @@ package company.com.checkers;
 
 import android.util.Log;
 
-import java.util.ArrayList;
-
 public class GameModel {
     public static final int GRID_DIMENSION = 8;
 
@@ -32,15 +30,16 @@ public class GameModel {
         initGame();
     }
 
-    public int getActiveCheckerRow() {
-        return activeCheckerRow;
-    }
+    public void initGame() {
+        turn = WHITE;
+        playerColor = WHITE;
 
-    public int getActiveCheckerColumn() {
-        return activeCheckerColumn;
-    }
+        activeCheckerRow = activeCheckerColumn = -1;
+        active = false;
 
-    private void initGame() {
+        comboAttackerRow = comboAttackerColumn = -1;
+        attackStreak = false;
+
         for (int i = 0; i < GRID_DIMENSION; i++) {
             for (int j = 0; j < GRID_DIMENSION; j++) {
                 if ( ( i + j ) % 2 != 0 ) {
@@ -58,6 +57,44 @@ public class GameModel {
                 }
             }
         }
+    }
+
+    public void startStep(int row, int column) {
+        if (isOutOfField(row, column))
+            return;
+
+        if (turn == playerColor && isCheckerBelongsToPlayer(row, column)) {
+            if (areAttackAvailableForPlayer()) {
+                if (areAttackAvailable(row, column))
+                    activateDragging(row, column);
+                return;
+            }
+
+            if (areMovesAvailableForPlayer()) {
+                if (areMovesAvailable(row, column))
+                    activateDragging(row, column);
+                return;
+            }
+        }
+    }
+
+    public void stopStep(int row, int column) {
+        if (!isActiveDragging())
+            return;
+
+        if (areAttackAvailableForPlayer()) {
+            Log.d("1111", "yes");
+            if (isAttackValid(activeCheckerRow, activeCheckerColumn, row, column))
+                attack(row, column);
+        }
+        else {
+            if (isMoveValid(row, column)) {
+                Log.d("1111", "yes1");
+                move(row, column);
+            }
+        }
+
+        deactivateDragging();
     }
 
     public int[][] getGrid() {
@@ -82,14 +119,6 @@ public class GameModel {
 
     public boolean isActiveDragging(int row, int column) {
         return activeCheckerRow == row && activeCheckerColumn == column;
-    }
-
-    public int getTurn() {
-        return turn;
-    }
-
-    public int getPlayerColor() {
-        return playerColor;
     }
 
     public boolean areMovesAvailableForPlayer() {
@@ -146,7 +175,7 @@ public class GameModel {
     public boolean areAttackAvailableForPlayer() {
         for (int i = 0; i < GRID_DIMENSION; i++) {
             for (int j = 0; j < GRID_DIMENSION; j++) {
-                if (areAttackAvailable(i, j) == true)
+                if (areAttackAvailable(i, j))
                     return true;
             }
         }
