@@ -1,7 +1,10 @@
 package company.com.checkers;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -23,6 +26,24 @@ public class CheckersActivity extends Activity {
 
         view = (PlayingGridView) findViewById(R.id.view_playingField);
         view.setModel(model);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        SharedPreferences pref = getSharedPreferences(getLocalClassName(), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("flag", 1);
+        editor.commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        SharedPreferences pref = getSharedPreferences(getLocalClassName(), Context.MODE_PRIVATE);
+        Log.d("1111", "" + pref.getInt("1", 0));
     }
 
     public void startGame() {
