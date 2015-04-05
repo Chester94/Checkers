@@ -95,6 +95,34 @@ public class GameModel {
         deactivateDragging();
     }
 
+    public int getTurn() {
+        return turn;
+    }
+
+    public int getActiveCheckerRow() {
+        return activeCheckerRow;
+    }
+
+    public int getActiveCheckerColumn() {
+        return activeCheckerColumn;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public int getComboAttackerRow() {
+        return comboAttackerRow;
+    }
+
+    public int getComboAttackerColumn() {
+        return comboAttackerColumn;
+    }
+
+    public boolean isAttackStreak() {
+        return attackStreak;
+    }
+
     public int[][] getGrid() {
         return grid;
     }

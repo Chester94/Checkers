@@ -11,6 +11,9 @@ import android.view.Window;
 import android.view.WindowManager;
 
 public class CheckersActivity extends Activity {
+    private final int NOT_CREATE = 0;
+    private final int CREATE = 1;
+
     GameModel model = new GameModel();
     PlayingGridView view;
 
@@ -34,7 +37,25 @@ public class CheckersActivity extends Activity {
 
         SharedPreferences pref = getSharedPreferences(getLocalClassName(), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("flag", 1);
+        editor.putInt("CREATE", CREATE);
+
+        editor.putInt("TURN", model.getTurn());
+
+        editor.putBoolean("ACTIVE", model.isActive());
+        editor.putInt("ACTIVE_ROW", model.getActiveCheckerRow());
+        editor.putInt("ACTIVE_COLUMN", model.getActiveCheckerColumn());
+
+        editor.putBoolean("COMBO", model.isAttackStreak());
+        editor.putInt("COMBO_ROW", model.getComboAttackerRow());
+        editor.putInt("COMBO_COLUMN", model.getActiveCheckerColumn());
+
+        int[][] grid = model.getGrid();
+
+        for (int i = 0; i < GameModel.GRID_DIMENSION; i++) {
+            for (int j = 0; j < GameModel.GRID_DIMENSION; j++) {
+                editor.putInt("GRID_" + i + "_" + j, grid[i][j]);
+            }
+        }
         editor.commit();
     }
 
