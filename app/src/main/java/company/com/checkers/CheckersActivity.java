@@ -29,6 +29,8 @@ public class CheckersActivity extends Activity {
 
         view = (PlayingGridView) findViewById(R.id.view_playingField);
         view.setModel(model);
+
+        startGame();
     }
 
     @Override
@@ -47,7 +49,7 @@ public class CheckersActivity extends Activity {
 
         editor.putBoolean("COMBO", model.isAttackStreak());
         editor.putInt("COMBO_ROW", model.getComboAttackerRow());
-        editor.putInt("COMBO_COLUMN", model.getActiveCheckerColumn());
+        editor.putInt("COMBO_COLUMN", model.getComboAttackerColumn());
 
         int[][] grid = model.getGrid();
 
@@ -56,6 +58,7 @@ public class CheckersActivity extends Activity {
                 editor.putInt("GRID_" + i + "_" + j, grid[i][j]);
             }
         }
+
         editor.commit();
     }
 
@@ -64,7 +67,31 @@ public class CheckersActivity extends Activity {
         super.onResume();
 
         SharedPreferences pref = getSharedPreferences(getLocalClassName(), Context.MODE_PRIVATE);
-        Log.d("1111", "" + pref.getInt("1", 0));
+        int create = pref.getInt("CREATE", NOT_CREATE);
+        if (create == NOT_CREATE) {
+            startGame();
+            return;
+        }
+
+        model.setTurn(pref.getInt("TURN", GameModel.WHITE));
+
+        model.setActive(pref.getBoolean("ACTIVE", false));
+        model.setActiveCheckerRow(pref.getInt("ACTIVE_ROW", -1));
+        model.setActiveCheckerColumn(pref.getInt("ACTIVE_COLUMN", -1));
+
+        model.setAttackStreak(pref.getBoolean("COMBO", false));
+        model.setComboAttackerRow(pref.getInt("COMBO_ROW", -1));
+        model.setComboAttackerColumn(pref.getInt("COMBO_COLUMN", -1));
+
+        int[][] grid = new int[GameModel.GRID_DIMENSION][GameModel.GRID_DIMENSION];
+
+        for (int i = 0; i < GameModel.GRID_DIMENSION; i++) {
+            for (int j = 0; j < GameModel.GRID_DIMENSION; j++) {
+                grid[i][j] = pref.getInt("GRID_" + i + "_" + j, GameModel.NONE);
+            }
+        }
+
+        model.setGrid(grid);
     }
 
     public void startGame() {

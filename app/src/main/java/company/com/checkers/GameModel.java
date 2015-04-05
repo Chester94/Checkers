@@ -127,6 +127,38 @@ public class GameModel {
         return grid;
     }
 
+    public void setTurn(int turn) {
+        this.turn = turn;
+    }
+
+    public void setGrid(int[][] grid) {
+        this.grid = grid;
+    }
+
+    public void setActiveCheckerRow(int activeCheckerRow) {
+        this.activeCheckerRow = activeCheckerRow;
+    }
+
+    public void setActiveCheckerColumn(int activeCheckerColumn) {
+        this.activeCheckerColumn = activeCheckerColumn;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public void setComboAttackerRow(int comboAttackerRow) {
+        this.comboAttackerRow = comboAttackerRow;
+    }
+
+    public void setComboAttackerColumn(int comboAttackerColumn) {
+        this.comboAttackerColumn = comboAttackerColumn;
+    }
+
+    public void setAttackStreak(boolean attackStreak) {
+        this.attackStreak = attackStreak;
+    }
+
     public void activateDragging(int row, int column) {
         activeCheckerRow = row;
         activeCheckerColumn = column;
