@@ -13,7 +13,6 @@ public class GameModel {
     public static final int BLACK_QUEEN = 4;
 
     private int turn = WHITE;
-    private int playerColor = WHITE;
 
     private int[][] grid;
 
@@ -32,7 +31,6 @@ public class GameModel {
 
     public void initGame() {
         turn = WHITE;
-        playerColor = WHITE;
 
         activeCheckerRow = activeCheckerColumn = -1;
         active = false;
@@ -63,7 +61,7 @@ public class GameModel {
         if (isOutOfField(row, column))
             return;
 
-        if (turn == playerColor && isCheckerBelongsToPlayer(row, column)) {
+        if (isCheckerBelongsToPlayer(row, column)) {
             if (areAttackAvailableForPlayer()) {
                 if (areAttackAvailable(row, column))
                     activateDragging(row, column);
@@ -273,11 +271,9 @@ public class GameModel {
     private void changeTurn() {
         if (turn == WHITE) {
             turn = BLACK;
-            playerColor = BLACK;
         }
         else {
             turn = WHITE;
-            playerColor = WHITE;
         }
 
         comboAttackerRow = -1;
@@ -324,10 +320,10 @@ public class GameModel {
     }
 
     public boolean isCheckerBelongsToPlayer(int row, int column) {
-        if (playerColor == WHITE)
+        if (turn == WHITE)
             return grid[row][column] == WHITE || grid[row][column] == WHITE_QUEEN;
 
-        if (playerColor == BLACK)
+        if (turn == BLACK)
             return grid[row][column] == BLACK || grid[row][column] == BLACK_QUEEN;
 
         return false;
