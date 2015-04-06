@@ -13,6 +13,5 @@
         class="company.com.checkers.PlayingGridView"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/view_playingField" />
-
 </RelativeLayout>
 

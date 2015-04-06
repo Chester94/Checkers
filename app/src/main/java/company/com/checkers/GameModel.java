@@ -1,7 +1,10 @@
 package company.com.checkers;
 
-
 import android.util.Log;
+
+interface Lose {
+    void losing();
+}
 
 public class GameModel {
     public static final int GRID_DIMENSION = 8;
@@ -24,9 +27,15 @@ public class GameModel {
     private int comboAttackerColumn = -1;
     private boolean attackStreak = false;
 
+    private Lose loserListener = null;
+
     public GameModel() {
         grid = new int [GRID_DIMENSION][GRID_DIMENSION];
         initGame();
+    }
+
+    public void setLoserListener(Lose loserListener) {
+        this.loserListener = loserListener;
     }
 
     public void initGame() {
@@ -81,13 +90,11 @@ public class GameModel {
             return;
 
         if (areAttackAvailableForPlayer()) {
-            Log.d("1111", "yes");
             if (isAttackValid(activeCheckerRow, activeCheckerColumn, row, column))
                 attack(row, column);
         }
         else {
             if (isMoveValid(row, column)) {
-                Log.d("1111", "yes1");
                 move(row, column);
             }
         }
@@ -192,6 +199,9 @@ public class GameModel {
     public boolean areMovesAvailable(int row, int column) {
         boolean movesAvailable = false;
 
+        if (checkerOwner(row, column) != turn)
+            return false;
+
         if ( grid[row][column] == NONE )
             return false;
 
@@ -245,6 +255,9 @@ public class GameModel {
         if (checkerOwner(row, column) != turn)
             return false;
 
+        if ( grid[row][column] == NONE )
+            return false;
+
         if (isAttackValid(row, column, row - 2, column - 2))
             return true;
 
@@ -263,8 +276,6 @@ public class GameModel {
     public boolean isMoveValid(int toRow, int toColumn) {
         if (isOutOfField(toRow, toColumn))
             return false;
-
-        Log.d("1111", "" + activeCheckerRow + " " + activeCheckerColumn + " " + toRow + " " + toColumn);
 
         if (grid[toRow][toColumn] != NONE)
             return false;
@@ -336,6 +347,9 @@ public class GameModel {
             turn = WHITE;
         }
 
+        if (! areMovesAvailableForPlayer() && ! areAttackAvailableForPlayer() )
+            throwLose();
+
         comboAttackerRow = -1;
         comboAttackerColumn = -1;
         attackStreak = false;
@@ -357,8 +371,6 @@ public class GameModel {
         else {
             attackStreak = false;
             changeTurn();
-            if (! areMovesAvailableForPlayer() && ! areAttackAvailableForPlayer() )
-                throwLose();
         }
     }
 
@@ -369,14 +381,12 @@ public class GameModel {
         promoteToQueen(toRow, toColumn);
 
         changeTurn();
-
-        if (! areMovesAvailableForPlayer() && ! areAttackAvailableForPlayer() )
-            throwLose();
     }
 
     private void throwLose() {
-        Log.d("1111", "END GAME");
-        Log.d("1111", "SOME PROBLEM");
+        if (loserListener != null) {
+            loserListener.losing();
+        }
     }
 
     public boolean isCheckerBelongsToPlayer(int row, int column) {

@@ -9,8 +9,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
-public class CheckersActivity extends Activity {
+public class CheckersActivity extends Activity implements Lose {
     private final int NOT_CREATE = 0;
     private final int CREATE = 1;
 
@@ -30,6 +31,7 @@ public class CheckersActivity extends Activity {
         view = (PlayingGridView) findViewById(R.id.view_playingField);
         view.setModel(model);
 
+        model.setLoserListener(this);
         startGame();
     }
 
@@ -65,6 +67,8 @@ public class CheckersActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        model.setLoserListener(this);
 
         SharedPreferences pref = getSharedPreferences(getLocalClassName(), Context.MODE_PRIVATE);
         int create = pref.getInt("CREATE", NOT_CREATE);
@@ -120,5 +124,21 @@ public class CheckersActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void losing() {
+        int loser = model.getTurn();
+        String l = new String(" проиграли!");
+
+        if (loser == GameModel.WHITE)
+            l = "Белые" + l;
+        else
+            l = "Черные" + l;
+
+        Toast toast = Toast.makeText(getApplicationContext(), l, Toast.LENGTH_SHORT);
+        toast.show();
+
+        startGame();
     }
 }
