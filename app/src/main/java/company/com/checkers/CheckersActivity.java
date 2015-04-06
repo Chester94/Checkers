@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -12,6 +11,8 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 public class CheckersActivity extends Activity implements Lose {
+    public final static String UUID = "e91521df-92b9-47bf-96d5-c52ee838f6f6";
+
     private final int NOT_CREATE = 0;
     private final int CREATE = 1;
 
@@ -129,12 +130,12 @@ public class CheckersActivity extends Activity implements Lose {
     @Override
     public void losing() {
         int loser = model.getTurn();
-        String l = new String(" проиграли!");
+        String l = getString(R.string.losing);
 
         if (loser == GameModel.WHITE)
-            l = "Белые" + l;
+            l = getString(R.string.white) + l;
         else
-            l = "Черные" + l;
+            l = getString(R.string.black) + l;
 
         Toast toast = Toast.makeText(getApplicationContext(), l, Toast.LENGTH_SHORT);
         toast.show();

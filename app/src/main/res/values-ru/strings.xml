@@ -2,4 +2,7 @@
     <string name="app_name">Шашки</string>
 
     <string name="action_new_game">Новая игра</string>
+    <string name="losing">" проиграли!"</string>
+    <string name="white">Белые</string>
+    <string name="black">Черные</string>
 </resources>

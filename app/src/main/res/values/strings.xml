@@ -2,4 +2,7 @@
     <string name="app_name">Checkers</string>
 
     <string name="action_new_game">New game</string>
+    <string name="losing">" lose!"</string>
+    <string name="white">White</string>
+    <string name="black">Black</string>
 </resources>
