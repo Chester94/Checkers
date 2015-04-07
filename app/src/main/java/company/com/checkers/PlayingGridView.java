@@ -195,4 +195,6 @@ public class PlayingGridView extends View implements View.OnTouchListener {
         canvas.drawCircle(x, y, (float)(cellSize / 2.5), mainPaint);
         canvas.drawCircle(x, y, (float)(cellSize / 4.5), queenPaint);
     }
+
+
 }
