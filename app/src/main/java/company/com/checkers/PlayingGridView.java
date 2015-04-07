@@ -132,11 +132,13 @@ public class PlayingGridView extends View implements View.OnTouchListener {
      */
     private void drawCheckers(Canvas canvas) {
         int [][] grid = model.getGrid();
+        int typeActiveChecker = GameModel.NONE;
 
         for (int i = 0; i < GameModel.GRID_DIMENSION; i++) {
             for (int j = 0; j < GameModel.GRID_DIMENSION; j++) {
                 if (model.isActiveDragging(i, j)) {
-                    drawChecker(canvas, xActive, yActive, grid[i][j]);
+                    typeActiveChecker = grid[i][j];
+                    continue;
                 }
 
                 float x = (float)(cellSize * j + cellSize / 2.);
@@ -144,6 +146,8 @@ public class PlayingGridView extends View implements View.OnTouchListener {
                 drawChecker(canvas, x, y, grid[i][j]);
             }
         }
+
+        drawChecker(canvas, xActive, yActive, typeActiveChecker);
     }
 
     /**
