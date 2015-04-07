@@ -170,4 +170,10 @@ public class CheckersActivity extends Activity implements Lose {
         Toast toast = Toast.makeText(getApplicationContext(), l, Toast.LENGTH_SHORT);
         toast.show();
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        System.exit(0);
+    }
 }
