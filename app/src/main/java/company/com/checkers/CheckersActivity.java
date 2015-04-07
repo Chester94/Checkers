@@ -10,25 +10,84 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+/**
+ * Class activity. Connects the view and model.
+ */
 public class CheckersActivity extends Activity implements Lose {
+    /**
+     * The identifier for the bluetooth.
+     */
     public final static String UUID = "e91521df-92b9-47bf-96d5-c52ee838f6f6";
 
+    /**
+     * flag value creation
+     */
     private final int NOT_CREATE = 0;
+
+    /**
+     * flag value creation
+     */
     private final int CREATE = 1;
 
+    /**
+     * flag value creation
+     */
     private final String CREATE_FLAG = "CREATE_FLAG";
+
+    /**
+     * flag value creation
+     */
     private final String TURN = "TURN";
+
+    /**
+     * flag value creation
+     */
     private final String ACTIVE_FLAG = "ACTIVE_FLAG";
+
+    /**
+     * flag value creation
+     */
     private final String ACTIVE_ROW = "ACTIVE_ROW";
+
+    /**
+     * flag value creation
+     */
     private final String ACTIVE_COLUMN = "ACTIVE_COLUMN";
+
+    /**
+     * flag value creation
+     */
     private final String COMBO_FLAG = "COMBO_FLAG";
+
+    /**
+     * flag value creation
+     */
     private final String COMBO_ROW = "COMBO_ROW";
+
+    /**
+     * flag value creation
+     */
     private final String COMBO_COLUMN = "COMBO_COLUMN";
+
+    /**
+     * flag value creation
+     */
     private final String GRID = "GRID";
 
+    /**
+     * Model, game field.
+     */
     GameModel model = new GameModel();
+
+    /**
+     * View, grid.
+     */
     PlayingGridView view;
 
+    /**
+     * Connects the model and the view. Disables the window title. Toggle fullscreen.
+     * @param savedInstanceState save state. Non-used
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +105,9 @@ public class CheckersActivity extends Activity implements Lose {
         startGame();
     }
 
+    /**
+     * Saves the current state of the model in the "Settings" when the suspension of activity.
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -75,6 +137,9 @@ public class CheckersActivity extends Activity implements Lose {
         editor.commit();
     }
 
+    /**
+     * Restores the current state of the model of the "settings" in the resumption of activity
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -109,11 +174,19 @@ public class CheckersActivity extends Activity implements Lose {
         model.setGrid(grid);
     }
 
+    /**
+     * Start the game!
+     */
     public void startGame() {
         model.initGame();
         view.invalidate();
     }
 
+    /**
+     * System function. Menu work.
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -121,6 +194,11 @@ public class CheckersActivity extends Activity implements Lose {
         return true;
     }
 
+    /**
+     * Menu item selected.
+     * @param item
+     * @return true - success, false - fail
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -142,6 +220,9 @@ public class CheckersActivity extends Activity implements Lose {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * The implementation of an interface method. Post a loser
+     */
     @Override
     public void losing() {
         int loser = model.getTurn();
@@ -158,6 +239,9 @@ public class CheckersActivity extends Activity implements Lose {
         startGame();
     }
 
+    /**
+     * Reports whose turn. Function for menu.
+     */
     private void whoseTurn() {
         int loser = model.getTurn();
         String l;
@@ -171,6 +255,9 @@ public class CheckersActivity extends Activity implements Lose {
         toast.show();
     }
 
+    /**
+     * Processing pressing "back".
+     */
     @Override
     public void onBackPressed() {
         super.onBackPressed();
