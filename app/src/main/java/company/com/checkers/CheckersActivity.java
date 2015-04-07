@@ -16,6 +16,16 @@ public class CheckersActivity extends Activity implements Lose {
     private final int NOT_CREATE = 0;
     private final int CREATE = 1;
 
+    private final String CREATE_FLAG = "CREATE_FLAG";
+    private final String TURN = "TURN";
+    private final String ACTIVE_FLAG = "ACTIVE_FLAG";
+    private final String ACTIVE_ROW = "ACTIVE_ROW";
+    private final String ACTIVE_COLUMN = "ACTIVE_COLUMN";
+    private final String COMBO_FLAG = "COMBO_FLAG";
+    private final String COMBO_ROW = "COMBO_ROW";
+    private final String COMBO_COLUMN = "COMBO_COLUMN";
+    private final String GRID = "GRID";
+
     GameModel model = new GameModel();
     PlayingGridView view;
 
@@ -42,23 +52,23 @@ public class CheckersActivity extends Activity implements Lose {
 
         SharedPreferences pref = getSharedPreferences(getLocalClassName(), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("CREATE", CREATE);
+        editor.putInt(CREATE_FLAG, CREATE);
 
-        editor.putInt("TURN", model.getTurn());
+        editor.putInt(TURN, model.getTurn());
 
-        editor.putBoolean("ACTIVE", model.isActive());
-        editor.putInt("ACTIVE_ROW", model.getActiveCheckerRow());
-        editor.putInt("ACTIVE_COLUMN", model.getActiveCheckerColumn());
+        editor.putBoolean(ACTIVE_FLAG, model.isActive());
+        editor.putInt(ACTIVE_ROW, model.getActiveCheckerRow());
+        editor.putInt(ACTIVE_COLUMN, model.getActiveCheckerColumn());
 
-        editor.putBoolean("COMBO", model.isAttackStreak());
-        editor.putInt("COMBO_ROW", model.getComboAttackerRow());
-        editor.putInt("COMBO_COLUMN", model.getComboAttackerColumn());
+        editor.putBoolean(COMBO_FLAG, model.isAttackStreak());
+        editor.putInt(COMBO_ROW, model.getComboAttackerRow());
+        editor.putInt(COMBO_COLUMN, model.getComboAttackerColumn());
 
         int[][] grid = model.getGrid();
 
         for (int i = 0; i < GameModel.GRID_DIMENSION; i++) {
             for (int j = 0; j < GameModel.GRID_DIMENSION; j++) {
-                editor.putInt("GRID_" + i + "_" + j, grid[i][j]);
+                editor.putInt(GRID + "_" + i + "_" + j, grid[i][j]);
             }
         }
 
@@ -72,27 +82,27 @@ public class CheckersActivity extends Activity implements Lose {
         model.setLoserListener(this);
 
         SharedPreferences pref = getSharedPreferences(getLocalClassName(), Context.MODE_PRIVATE);
-        int create = pref.getInt("CREATE", NOT_CREATE);
+        int create = pref.getInt(CREATE_FLAG, NOT_CREATE);
         if (create == NOT_CREATE) {
             startGame();
             return;
         }
 
-        model.setTurn(pref.getInt("TURN", GameModel.WHITE));
+        model.setTurn(pref.getInt(TURN, GameModel.WHITE));
 
-        model.setActive(pref.getBoolean("ACTIVE", false));
-        model.setActiveCheckerRow(pref.getInt("ACTIVE_ROW", -1));
-        model.setActiveCheckerColumn(pref.getInt("ACTIVE_COLUMN", -1));
+        model.setActive(pref.getBoolean(ACTIVE_FLAG, false));
+        model.setActiveCheckerRow(pref.getInt(ACTIVE_ROW, -1));
+        model.setActiveCheckerColumn(pref.getInt(ACTIVE_COLUMN, -1));
 
-        model.setAttackStreak(pref.getBoolean("COMBO", false));
-        model.setComboAttackerRow(pref.getInt("COMBO_ROW", -1));
-        model.setComboAttackerColumn(pref.getInt("COMBO_COLUMN", -1));
+        model.setAttackStreak(pref.getBoolean(COMBO_FLAG, false));
+        model.setComboAttackerRow(pref.getInt(COMBO_ROW, -1));
+        model.setComboAttackerColumn(pref.getInt(COMBO_COLUMN, -1));
 
         int[][] grid = new int[GameModel.GRID_DIMENSION][GameModel.GRID_DIMENSION];
 
         for (int i = 0; i < GameModel.GRID_DIMENSION; i++) {
             for (int j = 0; j < GameModel.GRID_DIMENSION; j++) {
-                grid[i][j] = pref.getInt("GRID_" + i + "_" + j, GameModel.NONE);
+                grid[i][j] = pref.getInt(GRID + "_" + i + "_" + j, GameModel.NONE);
             }
         }
 
