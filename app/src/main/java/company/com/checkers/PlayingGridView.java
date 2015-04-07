@@ -9,8 +9,8 @@ import android.view.MotionEvent;
 import android.view.View;
 
 public class PlayingGridView extends View implements View.OnTouchListener {
-    private float x;
-    private float y;
+    private float xActive;
+    private float yActive;
 
     double cellSize;
 
@@ -43,8 +43,11 @@ public class PlayingGridView extends View implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        int row = (int)Math.round(event.getY() / cellSize);
-        int column = (int)Math.round(event.getX() / cellSize);
+        int row = (int)Math.floor(event.getY() / cellSize);
+        int column = (int)Math.floor(event.getX() / cellSize);
+
+        xActive = event.getX();
+        yActive = event.getY();
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
@@ -86,8 +89,10 @@ public class PlayingGridView extends View implements View.OnTouchListener {
 
         for (int i = 0; i < GameModel.GRID_DIMENSION; i++) {
             for (int j = 0; j < GameModel.GRID_DIMENSION; j++) {
-                if (model.isActiveDragging(i, j))
+                if (model.isActiveDragging(i, j)) {
+                    drawChecker(canvas, xActive, yActive, grid[i][j]);
                     continue;
+                }
 
                 float x = (float)(cellSize * j + cellSize / 2.);
                 float y = (float)(cellSize * i + cellSize / 2.);
