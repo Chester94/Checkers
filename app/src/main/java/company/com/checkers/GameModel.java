@@ -1,7 +1,5 @@
 package company.com.checkers;
 
-import android.util.Log;
-
 interface Lose {
     void losing();
 }
