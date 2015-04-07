@@ -166,13 +166,13 @@ public class GameModel {
         this.attackStreak = attackStreak;
     }
 
-    public void activateDragging(int row, int column) {
+    private void activateDragging(int row, int column) {
         activeCheckerRow = row;
         activeCheckerColumn = column;
         active = true;
     }
 
-    public void deactivateDragging() {
+    private void deactivateDragging() {
         activeCheckerRow = -1;
         activeCheckerColumn = -1;
         active = false;
@@ -186,7 +186,7 @@ public class GameModel {
         return activeCheckerRow == row && activeCheckerColumn == column;
     }
 
-    public boolean areMovesAvailableForPlayer() {
+    private boolean areMovesAvailableForPlayer() {
         for (int i = 0; i < GRID_DIMENSION; i++) {
             for (int j = 0; j < GRID_DIMENSION; j++) {
                 if ( areMovesAvailable(i, j) )
@@ -196,7 +196,7 @@ public class GameModel {
         return false;
     }
 
-    public boolean areMovesAvailable(int row, int column) {
+    private boolean areMovesAvailable(int row, int column) {
         boolean movesAvailable = false;
 
         if (checkerOwner(row, column) != turn)
@@ -240,7 +240,7 @@ public class GameModel {
         return false;
     }
 
-    public boolean areAttackAvailableForPlayer() {
+    private boolean areAttackAvailableForPlayer() {
         for (int i = 0; i < GRID_DIMENSION; i++) {
             for (int j = 0; j < GRID_DIMENSION; j++) {
                 if (areAttackAvailable(i, j))
@@ -251,7 +251,7 @@ public class GameModel {
         return false;
     }
 
-    public boolean areAttackAvailable(int row, int column) {
+    private boolean areAttackAvailable(int row, int column) {
         if (checkerOwner(row, column) != turn)
             return false;
 
@@ -273,7 +273,7 @@ public class GameModel {
         return false;
     }
 
-    public boolean isMoveValid(int toRow, int toColumn) {
+    private boolean isMoveValid(int toRow, int toColumn) {
         if (isOutOfField(toRow, toColumn))
             return false;
 
@@ -294,7 +294,7 @@ public class GameModel {
         return false;
     }
 
-    public boolean isAttackValid(int fromRow, int fromColumn, int toRow, int toColumn) {
+    private boolean isAttackValid(int fromRow, int fromColumn, int toRow, int toColumn) {
         if (isOutOfField(toRow, toColumn))
             return false;
 
@@ -313,7 +313,7 @@ public class GameModel {
         return false;
     }
 
-    public boolean isOutOfField(int row, int column) {
+    private boolean isOutOfField(int row, int column) {
         if( row < 0 || row > (GRID_DIMENSION - 1) ||
                 column < 0 || column > (GRID_DIMENSION - 1))
             return true;
@@ -355,7 +355,7 @@ public class GameModel {
         attackStreak = false;
     }
 
-    public void attack(int toRow, int toColumn) {
+    private void attack(int toRow, int toColumn) {
         grid[toRow][toColumn] = grid[activeCheckerRow][activeCheckerColumn];
         grid[(toRow + activeCheckerRow) / 2][(toColumn + activeCheckerColumn) / 2] = NONE;
         grid[activeCheckerRow][activeCheckerColumn] = NONE;
@@ -374,7 +374,7 @@ public class GameModel {
         }
     }
 
-    public void move(int toRow, int toColumn) {
+    private void move(int toRow, int toColumn) {
         grid[toRow][toColumn] = grid[activeCheckerRow][activeCheckerColumn];
         grid[activeCheckerRow][activeCheckerColumn] = NONE;
 
@@ -389,7 +389,7 @@ public class GameModel {
         }
     }
 
-    public boolean isCheckerBelongsToPlayer(int row, int column) {
+    private boolean isCheckerBelongsToPlayer(int row, int column) {
         if (turn == WHITE)
             return grid[row][column] == WHITE || grid[row][column] == WHITE_QUEEN;
 
