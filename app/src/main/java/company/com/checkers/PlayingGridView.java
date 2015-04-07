@@ -8,28 +8,60 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+/**
+ * View class. Displays to the user model. Initial processing of events.
+ */
 public class PlayingGridView extends View implements View.OnTouchListener {
+    /**
+     * X-coord active checker
+     */
     private float xActive;
+
+    /**
+     * Y-coord active checker
+     */
     private float yActive;
 
-    double cellSize;
+    /**
+     * The pixel size of the grid cells
+     */
+    private double cellSize;
 
+    /**
+     * Model, play field
+     */
     private GameModel model;
 
+    /**
+     * Setter.
+     * @param model installed model
+     */
     public void setModel(GameModel model) {
         this.model = model;
     }
 
+    /**
+     * Constructor.
+     * @param context system param
+     * @param attrs system param
+     */
     public PlayingGridView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setOnTouchListener(this);
     }
 
+    /**
+     * Calculating the size of the cell.
+     */
     public void calcCellSize() {
         int size = Math.min(getHeight(), getWidth());
         cellSize = (double)size / GameModel.GRID_DIMENSION;
     }
 
+    /**
+     * Draw view.
+     * @param canvas system param (draw there)
+     */
     @Override
     protected void onDraw(Canvas canvas) {
         Paint paint = new Paint();
@@ -41,6 +73,12 @@ public class PlayingGridView extends View implements View.OnTouchListener {
         drawCheckers(canvas);
     }
 
+    /**
+     * Event handling Touch Screen
+     * @param v system param
+     * @param event system param
+     * @return true - processed, false - non-processed
+     */
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         int row = (int)Math.floor(event.getY() / cellSize);
@@ -63,6 +101,10 @@ public class PlayingGridView extends View implements View.OnTouchListener {
         return true;
     }
 
+    /**
+     * Drawing chessboard. Dimensions of the model.
+     * @param canvas system param (draw there)
+     */
     private void drawGrid(Canvas canvas) {
         Paint paint = new Paint();
         float x1, x2, y1, y2;
@@ -84,6 +126,10 @@ public class PlayingGridView extends View implements View.OnTouchListener {
         }
     }
 
+    /**
+     * Drawing of the chips, which currently exist
+     * @param canvas system param (draw there)
+     */
     private void drawCheckers(Canvas canvas) {
         int [][] grid = model.getGrid();
 
@@ -91,7 +137,6 @@ public class PlayingGridView extends View implements View.OnTouchListener {
             for (int j = 0; j < GameModel.GRID_DIMENSION; j++) {
                 if (model.isActiveDragging(i, j)) {
                     drawChecker(canvas, xActive, yActive, grid[i][j]);
-                    continue;
                 }
 
                 float x = (float)(cellSize * j + cellSize / 2.);
@@ -101,6 +146,13 @@ public class PlayingGridView extends View implements View.OnTouchListener {
         }
     }
 
+    /**
+     * Drawing particular Checkers.
+     * @param canvas system param (draw there)
+     * @param x X-coord
+     * @param y Y-coord
+     * @param type type being drawn Checkers
+     */
     private void drawChecker(Canvas canvas, float x, float y, int type) {
         Paint mainPaint = new Paint();
         Paint strokePaint = new Paint();
