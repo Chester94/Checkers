@@ -235,8 +235,6 @@ public class CheckersActivity extends Activity implements Lose {
 
         Toast toast = Toast.makeText(getApplicationContext(), l, Toast.LENGTH_SHORT);
         toast.show();
-
-        startGame();
     }
 
     /**
