@@ -5,4 +5,5 @@
     <string name="losing">" проиграли!"</string>
     <string name="white">Белые</string>
     <string name="black">Черные</string>
+    <string name="action_whose_turn">Чей ход?</string>
 </resources>

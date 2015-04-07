@@ -5,4 +5,7 @@
 
     <item android:id="@+id/action_new_game" android:title="@string/action_new_game"
         android:orderInCategory="100" app:showAsAction="never" />
+
+    <item android:id="@+id/action_whose_turn" android:title="@string/action_whose_turn"
+        android:orderInCategory="100" app:showAsAction="never" />
 </menu>

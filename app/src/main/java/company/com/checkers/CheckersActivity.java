@@ -134,6 +134,11 @@ public class CheckersActivity extends Activity implements Lose {
             return true;
         }
 
+        if (id == R.id.action_whose_turn) {
+            whoseTurn();
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -151,5 +156,18 @@ public class CheckersActivity extends Activity implements Lose {
         toast.show();
 
         startGame();
+    }
+
+    private void whoseTurn() {
+        int loser = model.getTurn();
+        String l;
+
+        if (loser == GameModel.WHITE)
+            l = getString(R.string.white);
+        else
+            l = getString(R.string.black);
+
+        Toast toast = Toast.makeText(getApplicationContext(), l, Toast.LENGTH_SHORT);
+        toast.show();
     }
 }
